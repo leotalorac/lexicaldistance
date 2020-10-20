@@ -35,7 +35,7 @@ func distance(a string, b string) int {
 	}
 	// lastrow
 	lastrow := make(map[string]int)
-	fmt.Println(d)
+	// fmt.Println(d)
 	for i := 1; i < len(a)+1; i++ {
 		cha := string([]rune(a)[i-1])
 		lastmatchcol := 0
@@ -60,10 +60,10 @@ func distance(a string, b string) int {
 		}
 		lastrow[cha] = i
 	}
-	fmt.Println(d)
-	fmt.Println(lastrow)
+	// fmt.Println(d)
+	// fmt.Println(lastrow)
 	return d[len(a)][len(b)]
 }
 func main() {
-	fmt.Println(distance("luis", "laiso"))
+	fmt.Println(distance("luis", "luiso"))
 }
