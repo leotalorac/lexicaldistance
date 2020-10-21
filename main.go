@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"strings"
 )
 
 func MinOf(vars ...int) int {
@@ -65,5 +67,12 @@ func distance(a string, b string) int {
 	return d[len(a)][len(b)]
 }
 func main() {
-	fmt.Println(distance("luis", "luiso"))
+	// fmt.Println(distance("luis", "luiso"))
+	data, err := ioutil.ReadFile("./languages/csharp.txt")
+	if err != nil {
+		fmt.Println("File reading error", err)
+		return
+	}
+	words := strings.Split(string(data), " ")
+	fmt.Println(words)
 }
