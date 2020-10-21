@@ -66,13 +66,36 @@ func distance(a string, b string) int {
 	// fmt.Println(lastrow)
 	return d[len(a)][len(b)]
 }
+func frecuenciescalc(words []string) map[int]int {
+	frecuencies := make(map[int]int)
+	var d int
+	for i := 0; i < len(words); i++ {
+		for j := i + 1; j < len(words); j++ {
+			d = distance(words[i], words[j])
+			if val, ok := frecuencies[d]; ok {
+				frecuencies[d] = val + 1
+			} else {
+				frecuencies[d] = 1
+			}
+		}
+	}
+	return frecuencies
+}
+
 func main() {
 	// fmt.Println(distance("luis", "luiso"))
-	data, err := ioutil.ReadFile("./languages/csharp.txt")
+	datacsharp, err := ioutil.ReadFile("./languages/csharp.txt")
+	wordssharp := strings.Split(string(datacsharp), " ")
+	fmt.Println(frecuenciescalc(wordssharp))
+	datacpp, err := ioutil.ReadFile("./languages/cpp.txt")
+	wordscpp := strings.Split(string(datacpp), " ")
+	fmt.Println(frecuenciescalc(wordscpp))
+	datajava, err := ioutil.ReadFile("./languages/java.txt")
+	wordsjava := strings.Split(string(datajava), " ")
+	fmt.Println(frecuenciescalc(wordsjava))
 	if err != nil {
 		fmt.Println("File reading error", err)
 		return
 	}
-	words := strings.Split(string(data), " ")
-	fmt.Println(words)
+
 }
