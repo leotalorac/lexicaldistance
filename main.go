@@ -69,29 +69,29 @@ func distance(a string, b string) int {
 	// fmt.Println(lastrow)
 	return d[len(a)][len(b)]
 }
-func frecuenciescalc(words []string) []int {
+func frecuenciescalc(words []string) ([]int, float64) {
 	// frecuencies := make(map[int]int)
 	var fre []int
 	var d int
+	sum := 0
+	c := 0
 	for i := 0; i < len(words); i++ {
-		for j := i + 1; j < len(words); j++ {
+		for j := i; j < len(words); j++ {
 			d = distance(words[i], words[j])
-			// if val, ok := frecuencies[d]; ok {
-			// 	frecuencies[d] = val + 1
-			// } else {
-			// 	frecuencies[d] = 1
-			// }
+			sum = sum + d
+			c++
 			fre = append(fre, d)
 		}
 	}
-	return fre
+	var avg = (float64(sum)) / (float64(c))
+	return fre, avg
 }
 func createhist(f []int) {
 	var new_bound []float64
 	for i := 1; i < len(f); i++ {
 		new_bound = append(new_bound, float64(f[i]))
 	}
-	hist := histogramtool.Hist(10, new_bound)
+	hist := histogramtool.Hist(5, new_bound)
 	if err := histogramtool.Fprint(os.Stdout, hist, histogramtool.Linear(5)); err != nil {
 		panic(err)
 	}
@@ -102,17 +102,20 @@ func main() {
 	datacsharp, err := ioutil.ReadFile("./languages/csharp.txt")
 	wordssharp := strings.Split(string(datacsharp), " ")
 	fmt.Println("---------------------------C#---------------------------")
-	f := frecuenciescalc(wordssharp)
+	f, avg := frecuenciescalc(wordssharp)
+	fmt.Println(avg)
 	createhist(f)
 	datacpp, err := ioutil.ReadFile("./languages/cpp.txt")
 	wordscpp := strings.Split(string(datacpp), " ")
 	fmt.Println("---------------------------C++---------------------------")
-	f = frecuenciescalc(wordscpp)
+	f, avg = frecuenciescalc(wordscpp)
+	fmt.Println(avg)
 	createhist(f)
 	datajava, err := ioutil.ReadFile("./languages/java.txt")
 	wordsjava := strings.Split(string(datajava), " ")
 	fmt.Println("---------------------------Java---------------------------")
-	f = frecuenciescalc(wordsjava)
+	f, avg = frecuenciescalc(wordsjava)
+	fmt.Println(avg)
 	createhist(f)
 	if err != nil {
 		fmt.Println("File reading error", err)
