@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
-	"math/rand"
+	"math"
 	"os"
 	"strings"
 
@@ -101,7 +101,6 @@ func createhist(f []int) {
 	}
 }
 func nehistogram(f []int, filename string) {
-	rand.Seed(int64(0))
 	v := make(plotter.Values, len(f))
 	for i := range f {
 		v[i] = float64(f[i])
@@ -122,6 +121,35 @@ func nehistogram(f []int, filename string) {
 		panic(err)
 	}
 }
+func distanceascci(a string, b string) int {
+	distance := 0.0
+	max := len(b)
+	if len(a) < len(b) {
+		max = len(a)
+	}
+	for i := 0; i < max; i++ {
+		distance = distance + math.Abs(float64(a[i]-b[i]))
+	}
+	distance += math.Abs(float64(len(a) - len(b)))
+	return int(distance)
+}
+func frecuenciesasccicalc(words []string) ([]int, float64) {
+	// frecuencies := make(map[int]int)
+	var fre []int
+	var d int
+	sum := 0
+	c := 0
+	for i := 0; i < len(words); i++ {
+		for j := i; j < len(words); j++ {
+			d = distanceascci(words[i], words[j])
+			sum = sum + d
+			c++
+			fre = append(fre, d)
+		}
+	}
+	var avg = (float64(sum)) / (float64(c))
+	return fre, avg
+}
 func getinfolanguage(name string, file string) {
 	datacsharp, err := ioutil.ReadFile("./languages/" + file + ".txt")
 	wordssharp := strings.Split(string(datacsharp), " ")
@@ -130,6 +158,11 @@ func getinfolanguage(name string, file string) {
 	fmt.Println(avg)
 	createhist(f)
 	nehistogram(f, "./hist/"+file+".png")
+	f, avg = frecuenciesasccicalc(wordssharp)
+	fmt.Println(avg)
+	createhist(f)
+	nehistogram(f, "./hist/"+file+"-ascci.png")
+	// error management
 	if err != nil {
 		fmt.Println("File reading error", err)
 		return
