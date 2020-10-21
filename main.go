@@ -3,10 +3,14 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"math/rand"
 	"os"
 	"strings"
 
 	histogramtool "github.com/aybabtme/uniplot/histogram"
+	"gonum.org/v1/plot"
+	"gonum.org/v1/plot/plotter"
+	"gonum.org/v1/plot/vg"
 )
 
 func MinOf(vars ...int) int {
@@ -91,8 +95,30 @@ func createhist(f []int) {
 	for i := 1; i < len(f); i++ {
 		new_bound = append(new_bound, float64(f[i]))
 	}
-	hist := histogramtool.Hist(5, new_bound)
+	hist := histogramtool.Hist(10, new_bound)
 	if err := histogramtool.Fprint(os.Stdout, hist, histogramtool.Linear(5)); err != nil {
+		panic(err)
+	}
+}
+func nehistogram(f []int, filename string) {
+	rand.Seed(int64(0))
+	v := make(plotter.Values, len(f))
+	for i := range f {
+		v[i] = float64(f[i])
+	}
+	// Make a plot and set its title.
+	p, err := plot.New()
+	if err != nil {
+		panic(err)
+	}
+	p.Title.Text = "Histogram"
+	h, err := plotter.NewHist(v, 10)
+	if err != nil {
+		panic(err)
+	}
+	p.Add(h)
+	// Save the plot to a PNG file.
+	if err := p.Save(4*vg.Inch, 4*vg.Inch, filename); err != nil {
 		panic(err)
 	}
 }
@@ -105,18 +131,21 @@ func main() {
 	f, avg := frecuenciescalc(wordssharp)
 	fmt.Println(avg)
 	createhist(f)
+	nehistogram(f, ".hist/csharp.png")
 	datacpp, err := ioutil.ReadFile("./languages/cpp.txt")
 	wordscpp := strings.Split(string(datacpp), " ")
 	fmt.Println("---------------------------C++---------------------------")
 	f, avg = frecuenciescalc(wordscpp)
 	fmt.Println(avg)
 	createhist(f)
+	nehistogram(f, ".hist/cpp.png")
 	datajava, err := ioutil.ReadFile("./languages/java.txt")
 	wordsjava := strings.Split(string(datajava), " ")
 	fmt.Println("---------------------------Java---------------------------")
 	f, avg = frecuenciescalc(wordsjava)
 	fmt.Println(avg)
 	createhist(f)
+	nehistogram(f, ".hist/java.png")
 	if err != nil {
 		fmt.Println("File reading error", err)
 		return
