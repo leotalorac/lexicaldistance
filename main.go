@@ -122,33 +122,22 @@ func nehistogram(f []int, filename string) {
 		panic(err)
 	}
 }
-
-func main() {
-	// fmt.Println(distance("luis", "luiso"))
-	datacsharp, err := ioutil.ReadFile("./languages/csharp.txt")
+func getinfolanguage(name string, file string) {
+	datacsharp, err := ioutil.ReadFile("./languages/" + file + ".txt")
 	wordssharp := strings.Split(string(datacsharp), " ")
-	fmt.Println("---------------------------C#---------------------------")
+	fmt.Println("---------------------------" + name + "---------------------------")
 	f, avg := frecuenciescalc(wordssharp)
 	fmt.Println(avg)
 	createhist(f)
-	nehistogram(f, ".hist/csharp.png")
-	datacpp, err := ioutil.ReadFile("./languages/cpp.txt")
-	wordscpp := strings.Split(string(datacpp), " ")
-	fmt.Println("---------------------------C++---------------------------")
-	f, avg = frecuenciescalc(wordscpp)
-	fmt.Println(avg)
-	createhist(f)
-	nehistogram(f, ".hist/cpp.png")
-	datajava, err := ioutil.ReadFile("./languages/java.txt")
-	wordsjava := strings.Split(string(datajava), " ")
-	fmt.Println("---------------------------Java---------------------------")
-	f, avg = frecuenciescalc(wordsjava)
-	fmt.Println(avg)
-	createhist(f)
-	nehistogram(f, ".hist/java.png")
+	nehistogram(f, "./hist/"+file+".png")
 	if err != nil {
 		fmt.Println("File reading error", err)
 		return
 	}
+}
 
+func main() {
+	getinfolanguage("C#", "csharp")
+	getinfolanguage("C++", "cpp")
+	getinfolanguage("Java", "java")
 }
