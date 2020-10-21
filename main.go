@@ -3,7 +3,10 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strings"
+
+	histogramtool "github.com/aybabtme/uniplot/histogram"
 )
 
 func MinOf(vars ...int) int {
@@ -66,33 +69,51 @@ func distance(a string, b string) int {
 	// fmt.Println(lastrow)
 	return d[len(a)][len(b)]
 }
-func frecuenciescalc(words []string) map[int]int {
-	frecuencies := make(map[int]int)
+func frecuenciescalc(words []string) []int {
+	// frecuencies := make(map[int]int)
+	var fre []int
 	var d int
 	for i := 0; i < len(words); i++ {
 		for j := i + 1; j < len(words); j++ {
 			d = distance(words[i], words[j])
-			if val, ok := frecuencies[d]; ok {
-				frecuencies[d] = val + 1
-			} else {
-				frecuencies[d] = 1
-			}
+			// if val, ok := frecuencies[d]; ok {
+			// 	frecuencies[d] = val + 1
+			// } else {
+			// 	frecuencies[d] = 1
+			// }
+			fre = append(fre, d)
 		}
 	}
-	return frecuencies
+	return fre
+}
+func createhist(f []int) {
+	var new_bound []float64
+	for i := 1; i < len(f); i++ {
+		new_bound = append(new_bound, float64(f[i]))
+	}
+	hist := histogramtool.Hist(10, new_bound)
+	if err := histogramtool.Fprint(os.Stdout, hist, histogramtool.Linear(5)); err != nil {
+		panic(err)
+	}
 }
 
 func main() {
 	// fmt.Println(distance("luis", "luiso"))
 	datacsharp, err := ioutil.ReadFile("./languages/csharp.txt")
 	wordssharp := strings.Split(string(datacsharp), " ")
-	fmt.Println(frecuenciescalc(wordssharp))
+	fmt.Println("---------------------------C#---------------------------")
+	f := frecuenciescalc(wordssharp)
+	createhist(f)
 	datacpp, err := ioutil.ReadFile("./languages/cpp.txt")
 	wordscpp := strings.Split(string(datacpp), " ")
-	fmt.Println(frecuenciescalc(wordscpp))
+	fmt.Println("---------------------------C++---------------------------")
+	f = frecuenciescalc(wordscpp)
+	createhist(f)
 	datajava, err := ioutil.ReadFile("./languages/java.txt")
 	wordsjava := strings.Split(string(datajava), " ")
-	fmt.Println(frecuenciescalc(wordsjava))
+	fmt.Println("---------------------------Java---------------------------")
+	f = frecuenciescalc(wordsjava)
+	createhist(f)
 	if err != nil {
 		fmt.Println("File reading error", err)
 		return
